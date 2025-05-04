@@ -4,6 +4,7 @@ import UpcomingEvents from '../components/UpcomingEvents';
 import FeaturedEvents from '../components/FeaturedEvents';
 import './Home.css';
 import EventCard from '../components/EventCard';
+import CreateAccountButton from '../components/CreateEventButton';
 
 function Home() {
   const [dbEvents, setDbEvents] = useState([]);
@@ -72,7 +73,9 @@ function Home() {
             ))}
           </ul>
         )}
-      </section>
+       
+      </section>  
+      <CreateAccountButton />
     </div>
   );
 }

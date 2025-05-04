@@ -1,0 +1,71 @@
+/* CreateEvent.css - styled to match the modern card UI look */
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .event-wrapper {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+  
+  .title {
+    text-align: center;
+    font-size: 28px;
+    color: #f05500;
+    font-weight: 700;
+    margin-bottom: 30px;
+  }
+  
+  .event-form input {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  
+  .ticket-card {
+    background: #fff9f4;
+    border: 1px solid #f0c6a0;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .ticket-card input {
+    margin-top: 8px;
+  }
+  
+  .add-btn,
+  .submit-btn,
+  .remove-btn {
+    background-color: #f05500;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: inline-block;
+  }
+  
+  .remove-btn {
+    background-color: #cc0000;
+    margin-left: 10px;
+  }
+  
+  .add-btn:hover,
+  .submit-btn:hover,
+  .remove-btn:hover {
+    opacity: 0.9;
+  }
+  
