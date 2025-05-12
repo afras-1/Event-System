@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import TicketOption from '../components/TicketOption';
 import './CreateEvent.css';
+import { useNavigate } from 'react-router-dom';
 
 const CreateEvent = () => {
+  const navigate = useNavigate();
   // State for basic event details
   const [formData, setFormData] = useState({
     eventName: '',
@@ -51,7 +53,9 @@ const CreateEvent = () => {
       ticketOptions: ticketOptions
     };
     console.log('Complete Event Submission:', completeData);
-    // You can send 'completeData' to a backend API here
+    // could send submission data to a backend API here
+
+    navigate('/');
   };
 
   return (
@@ -59,6 +63,7 @@ const CreateEvent = () => {
       <h1 className="title">Create New Event</h1>
       <form className="event-form" onSubmit={handleSubmit}>
         <input name="eventName" placeholder="Event Name" onChange={handleChange} />
+        <input name="eventDescription" placeholder="Description" onChange={handleChange} />
         <input name="performers" placeholder="Performers" onChange={handleChange} />
         <input name="location" placeholder="Location" onChange={handleChange} />
 
