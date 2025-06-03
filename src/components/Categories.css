@@ -1,30 +1,35 @@
 .category-bar {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    padding: 10px 0 6px; /* Less top & bottom padding */
-    background-color: #faf8f5;
-    border-bottom: 1px solid #eee; /* Subtle separation from hero or nav */
-    margin-top: -8px; /* Pull up a bit if needed */
-  }
-  
-  .category-button {
-    background-color: #d34700;
-    color: #fff;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-family: 'Neue Haas Grotesk', sans-serif;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .category-button:hover {
-    background-color: #c13f00;
-  }
-  
-  .category-button.active {
-    background-color: #f95700;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 6px;
+  background-color: #faf8f5;
+  border-bottom: 1px solid #eee;
+  margin-top: -40px;
+}
+
+.category-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.category-button {
+  background-color: #d34700;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-family: 'Neue Haas Grotesk', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.category-button:hover {
+  background-color: #c13f00;
+}
+
+.category-button.active {
+  background-color: #f95700;
+}
