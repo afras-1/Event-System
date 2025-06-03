@@ -1,5 +1,8 @@
 const db = require('./database');
+const fs = require('fs');
+const path = require('path');
 
+// Clear tables in order respecting FK constraints
 db.prepare('DELETE FROM EventTransaction').run();
 db.prepare('DELETE FROM Ticket').run();
 db.prepare('DELETE FROM TicketOption').run();
@@ -10,9 +13,6 @@ db.prepare('DELETE FROM Venue').run();
 db.prepare('DELETE FROM User').run();
 
 // Insert venues
-const fs = require('fs');
-const path = require('path');
-
 const venues = [
   { id: 'V001', name: 'Sydney Conference Hall', capacity: 300, image: 'venue1.png' },
   { id: 'V002', name: 'Melbourne Startup Hub', capacity: 200, image: 'venue2.png' },
@@ -33,8 +33,7 @@ for (const venue of venues) {
   insertVenue.run(venue.id, venue.name, venue.capacity, imageBuffer);
 }
 
-
-// Insert organiser user
+// Insert users and organiser
 db.prepare(`
   INSERT INTO User (username, password, userType, email, address, phone) 
   VALUES 
@@ -47,49 +46,157 @@ db.prepare(`
   VALUES ('organiser1', 'Tech Events Ltd')
 `).run();
 
-// Insert events
-db.prepare(`
+const insertEvent = db.prepare(`
   INSERT INTO Event (
     eventName, eventType, eventDate, venueID, eventDesc, eventTime, performer, banner, organiserID
-  ) VALUES 
-    ('Tech Conference 2025', 'Conference', '2025-06-10', 'V001', 'Annual tech conference.', '09:00', '', null, 'organiser1'),
-    ('Startup Pitch Night', 'Networking', '2025-07-03', 'V002', 'Startup networking event.', '18:00', '', null, 'organiser1'),
-    ('Wine & Art Expo', 'Expo', '2025-08-15', 'V003', 'Art and wine exhibition.', '11:00', '', null, 'organiser1'),
-    ('React Developers Meetup', 'Meetup', '2025-09-05', 'V004', 'React devs online meetup.', '17:00', '', null, 'organiser1'),
-    ('AI & Machine Learning Expo', 'Expo', '2025-10-15', 'V005', 'AI and ML innovations.', '10:00', '', null, 'organiser1'),
-    ('Blockchain Summit 2025', 'Summit', '2025-11-20', 'V006', 'Summit for blockchain tech.', '09:30', '', null, 'organiser1')
-`).run();
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)
+`);
 
-// Tech Conference 2025 (eventID = 1)
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(1, 'General Admission', 50.00, 200);
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(1, 'Student Pass', 25.00, 100);
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(1, 'VIP Access', 120.00, 30);
+// Generate 55 events with unique names and categories
+// For date, start from 2025-06-01 and increment days
 
-// Startup Pitch Night (eventID = 2)
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(2, 'Standard Entry', 20.00, 150);
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(2, 'Networking Lounge', 40.00, 50);
+const musicArtists = [
+  'Taylor Swift', 'Coldplay', 'BTS', 'Ed Sheeran', 'Billie Eilish', 'The Weeknd', 
+  'Adele', 'Imagine Dragons', 'Dua Lipa', 'Bruno Mars'
+];
 
-// Wine & Art Expo (eventID = 3)
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(3, 'Day Pass', 30.00, 200);
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(3, 'Weekend Pass', 60.00, 100);
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(3, 'VIP Wine Tasting', 100.00, 20);
+const techTopics = [
+  'AI Revolution', 'Cybersecurity 2025', 'Blockchain Innovations', 'Quantum Computing',
+  'Cloud Native Summit', 'IoT Expo', 'VR & AR Conference', 'DevOps Days', 'Big Data Forum', '5G Technology'
+];
 
-// React Developers Meetup (eventID = 4)
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(4, 'RSVP Ticket', 0.00, 300);
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(4, 'Supporter Ticket', 15.00, 50);
+const comedians = [
+  'Kevin Hart', 'Amy Schumer', 'Dave Chappelle', 'Tiffany Haddish', 'John Mulaney', 
+  'Ali Wong', 'Bill Burr', 'Hasan Minhaj', 'Nikki Glaser', 'Jim Gaffigan'
+];
 
-// AI & Machine Learning Expo (eventID = 5)
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(5, 'Expo Entry', 45.00, 250);
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(5, 'Workshop Pass', 90.00, 60);
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(5, 'VIP + Workshop', 150.00, 25);
+const familyEvents = [
+  'Magic Show Extravaganza', 'Kids Puppet Theater', 'Family Fun Fair', 'Outdoor Movie Night',
+  'Children\'s Storytime', 'Zoo Adventure Day', 'Science for Kids', 'Family Yoga Session',
+  'Art & Craft Workshop', 'Pancake Breakfast'
+];
 
-// Blockchain Summit 2025 (eventID = 6)
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(6, 'Standard Pass', 70.00, 180);
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(6, 'Developer Pass', 90.00, 100);
-db.prepare(`INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)`).run(6, 'Investor VIP', 200.00, 20);
+const freeEvents = [
+  'Community Yoga', 'Open Mic Night', 'Local Art Gallery Tour', 'Book Club Meeting',
+  'Charity Run Meetup', 'Free Coding Workshop', 'Environmental Awareness Talk', 
+  'Gardening Club', 'Photography Walk', 'Meditation Session'
+];
 
+// Helper function to get date string YYYY-MM-DD starting from a base date + offset days
+function getDate(offset) {
+  const baseDate = new Date(2025, 5, 1); // June 1, 2025 (months 0-indexed)
+  baseDate.setDate(baseDate.getDate() + offset);
+  return baseDate.toISOString().slice(0, 10);
+}
 
-//insert image
+// Random time generator hh:mm format between 09:00 and 21:00
+function getRandomTime() {
+  const hour = 9 + Math.floor(Math.random() * 13); // 9 to 21
+  const minute = Math.floor(Math.random() * 2) * 30; // 0 or 30
+  return `${hour.toString().padStart(2,'0')}:${minute === 0 ? '00' : '30'}`;
+}
 
+// Organiser ID is always 'organiser1'
+const organiserID = 'organiser1';
+
+// Build the 55 events
+
+const events = [];
+let eventCounter = 0;
+
+// Helper to push event
+function addEvent(name, type, dateOffset, venueID, desc, performer) {
+  events.push({
+    name,
+    type,
+    date: getDate(dateOffset),
+    venueID,
+    desc,
+    time: getRandomTime(),
+    performer,
+  });
+  eventCounter++;
+}
+
+// Distribute events roughly evenly among categories and venues
+
+// Music - 15 events
+for(let i=0; i<15; i++) {
+  const artist = musicArtists[i % musicArtists.length];
+  const venue = venues[i % venues.length].id;
+  addEvent(`${artist} Live in Concert`, 'Music', i, venue, `An amazing live performance by ${artist}.`, artist);
+}
+
+// Tech - 10 events
+for(let i=0; i<10; i++) {
+  const topic = techTopics[i % techTopics.length];
+  const venue = venues[(i+3) % venues.length].id;
+  addEvent(`${topic} Conference`, 'Tech', i+15, venue, `Explore the latest trends in ${topic.toLowerCase()}.`, '');
+}
+
+// Comedy - 10 events
+for(let i=0; i<10; i++) {
+  const comedian = comedians[i % comedians.length];
+  const venue = venues[(i+1) % venues.length].id;
+  addEvent(`${comedian} Stand-up Special`, 'Comedy', i+25, venue, `Laugh out loud with ${comedian}'s best jokes.`, comedian);
+}
+
+// Family - 10 events
+for(let i=0; i<10; i++) {
+  const eventName = familyEvents[i % familyEvents.length];
+  const venue = venues[(i+4) % venues.length].id;
+  addEvent(eventName, 'Family', i+35, venue, `Fun and engaging activities for the whole family.`, '');
+}
+
+// Free - 10 events
+for(let i=0; i<10; i++) {
+  const eventName = freeEvents[i % freeEvents.length];
+  const venue = venues[(i+2) % venues.length].id;
+  addEvent(eventName, 'Free', i+45, venue, `Join us for this free community event: ${eventName}.`, '');
+}
+
+// Insert events into DB and keep track of their IDs for ticket options
+const eventIDs = [];
+
+for (const e of events) {
+  const info = insertEvent.run(e.name, e.type, e.date, e.venueID, e.desc, e.time, e.performer, organiserID);
+  eventIDs.push(info.lastInsertRowid);
+}
+
+// Insert ticket options relevant to event type
+
+const insertTicketOption = db.prepare(`
+  INSERT INTO TicketOption (eventID, ticketType, price, quantity) VALUES (?, ?, ?, ?)
+`);
+
+for (let i=0; i<eventIDs.length; i++) {
+  const eventID = eventIDs[i];
+  const event = events[i];
+
+  switch(event.type) {
+    case 'Music':
+      insertTicketOption.run(eventID, 'General Admission', 75.00, 150);
+      insertTicketOption.run(eventID, 'VIP Package', 150.00, 30);
+      insertTicketOption.run(eventID, 'Backstage Pass', 300.00, 10);
+      break;
+    case 'Tech':
+      insertTicketOption.run(eventID, 'Standard Pass', 100.00, 200);
+      insertTicketOption.run(eventID, 'Workshop Access', 250.00, 50);
+      insertTicketOption.run(eventID, 'Student Discount', 50.00, 100);
+      break;
+    case 'Comedy':
+      insertTicketOption.run(eventID, 'Regular Seat', 40.00, 120);
+      insertTicketOption.run(eventID, 'Front Row', 70.00, 20);
+      break;
+    case 'Family':
+      insertTicketOption.run(eventID, 'Child Ticket', 15.00, 100);
+      insertTicketOption.run(eventID, 'Adult Ticket', 30.00, 100);
+      insertTicketOption.run(eventID, 'Family Pack (2 adults + 2 children)', 80.00, 50);
+      break;
+    case 'Free':
+      insertTicketOption.run(eventID, 'Free Entry', 0.00, 1000);
+      break;
+  }
+}
 
 console.log('Database seeded successfully.');

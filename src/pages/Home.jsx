@@ -7,12 +7,12 @@ import './Home.css';
 function Home() {
   const [dbEvents, setDbEvents] = useState([]);
   const [loadingDbEvents, setLoadingDbEvents] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   useEffect(() => {
     fetch('http://localhost:5000/events')
       .then(res => res.json())
       .then(data => {
-        console.log('Fetched DB events:', data);
         setDbEvents(data);
         setLoadingDbEvents(false);
       })
@@ -22,16 +22,20 @@ function Home() {
       });
   }, []);
 
+  const filteredEvents = selectedCategory === 'All' 
+    ? dbEvents 
+    : dbEvents.filter(event => event.eventType === selectedCategory);
+
   return (
     <div className="home-page" data-testid="home-page">
-      <Categories data-testid="categories" />
+      <Categories onSelect={setSelectedCategory} data-testid="categories" />
 
       <section className="events-section" data-testid="upcoming-section">
         <h2 className="section-heading">
             Upcoming Events
         </h2>
         <div className="events-grid" data-testid="upcoming-grid">
-          <UpcomingEvents data-testid="upcoming-events" />
+          <UpcomingEvents events={filteredEvents} data-testid="upcoming-events" />
         </div>
       </section>
 
@@ -40,7 +44,7 @@ function Home() {
             Featured Events
         </h2>
         <div className="events-grid" data-testid="featured-grid">
-          <FeaturedEvents  data-testid="featured-events" />
+          <FeaturedEvents events={filteredEvents} data-testid="featured-events" />
         </div>
       </section>
     </div>

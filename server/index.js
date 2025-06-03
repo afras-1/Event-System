@@ -37,6 +37,40 @@ app.get('/venues', (req, res) => {
   }
 });
 
+app.get('/events/type/:eventType', (req, res) => {
+  try {
+    const eventType = req.params.eventType;
+
+    const query = `
+      SELECT 
+        Event.eventID,
+        Event.eventName,
+        Event.eventType,
+        Event.eventDate,
+        Event.eventTime,
+        Venue.venueName,
+        Event.banner
+      FROM Event
+      LEFT JOIN Venue ON Event.venueID = Venue.venueID
+      WHERE Event.eventType = ?
+    `;
+    const rows = db.prepare(query).all(eventType);
+
+    for (const event of rows) {
+      if (event.banner) {
+        const base64Banner = Buffer.from(event.banner).toString('base64');
+        event.banner = `data:image/png;base64,${base64Banner}`;
+      }
+    }
+
+    res.json(rows);
+  } catch (err) {
+    console.error('Error fetching events by type:', err.message);
+    res.status(500).json({ error: 'Failed to fetch events by type' });
+  }
+});
+
+
 app.get('/events', (req, res) => {
   try {
     const query = `

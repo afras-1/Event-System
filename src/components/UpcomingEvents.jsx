@@ -1,37 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import EventCard from '../components/EventCard';
 import './UpcomingEvents.css';
 
-function UpcomingEvents() {
-  const [dbEvents, setDbEvents] = useState([]);
-  const [loadingDbEvents, setLoadingDbEvents] = useState(true);
+function UpcomingEvents({ events }) {
+  if (!events) {
+    return <p>Loading events...</p>;
+  }
 
-  useEffect(() => {
-    fetch('/events')
-      .then(res => res.json())
-      .then(data => {
-        console.log('Fetched DB events:', data);
-        setDbEvents(data);
-        setLoadingDbEvents(false);
-      })
-      .catch(err => {
-        console.error('Error fetching events from DB:', err);
-        setLoadingDbEvents(false);
-      });
-  }, []);
+  if (events.length === 0) {
+    return <p>No events found.</p>;
+  }
+
+  // Get today's date (without time part)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Filter upcoming events and sort by date ascending
+  const upcomingEvents = events
+    .filter(event => {
+      const eventDate = new Date(event.eventDate);
+      return eventDate >= today;
+    })
+    .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
+    .slice(0, 3);
+
+  if (upcomingEvents.length === 0) {
+    return <p>No upcoming events found.</p>;
+  }
 
   return (
     <div className="events-grid">
-          {loadingDbEvents ? (
-            <p>Loading events from DB...</p>
-          ) : dbEvents.length === 0 ? (
-            <p>No events found in DB.</p>
-          ) : (
-            dbEvents.slice(0, 3).map(event => (
-              <EventCard key={event.eventID} event={event}/>
-            ))
-          )}
-        </div>
+      {upcomingEvents.map(event => (
+        <EventCard key={event.eventID} event={event} />
+      ))}
+    </div>
   );
 }
 
