@@ -417,8 +417,15 @@ app.delete('/events/:id', (req, res) => {
 
   try {
 
-    const deleteTickets = db.prepare(`DELETE FROM TicketOption WHERE eventID = ?`);
+
+    const deleteTransactions = db.prepare(`DELETE FROM EventTransaction WHERE ticketID IN (SELECT ticketID FROM Ticket WHERE eventID = ?)`);
+    deleteTransactions.run(eventID);
+
+    const deleteTickets = db.prepare(`DELETE FROM Ticket WHERE eventID = ?`);
     deleteTickets.run(eventID);
+
+    const deleteTicketOptions = db.prepare(`DELETE FROM TicketOption WHERE eventID = ?`);
+    deleteTicketOptions.run(eventID);
 
     const deleteEvent = db.prepare(`DELETE FROM Event WHERE eventID = ?`);
     const result = deleteEvent.run(eventID);
