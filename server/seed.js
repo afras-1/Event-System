@@ -14,12 +14,12 @@ db.prepare('DELETE FROM User').run();
 
 // Insert venues
 const venues = [
-  { id: 'V001', name: 'Sydney Conference Hall', capacity: 300, image: 'venue1.png' },
-  { id: 'V002', name: 'Melbourne Startup Hub', capacity: 200, image: 'venue2.png' },
-  { id: 'V003', name: 'Brisbane Arts Center', capacity: 150, image: 'venue3.png' },
+  { id: 'V001', name: 'Sydney Performance Hall', capacity: 300, image: 'venue1.png' },
+  { id: 'V002', name: 'Melbourne Conference Hub', capacity: 50, image: 'venue2.png' },
+  { id: 'V003', name: 'Brisbane Arts Center', capacity: 200, image: 'venue3.png' },
   { id: 'V004', name: 'Online Platform', capacity: 1000, image: 'venue4.png' },
-  { id: 'V005', name: 'Sydney Tech Arena', capacity: 500, image: 'venue5.png' },
-  { id: 'V006', name: 'Melbourne Blockchain Venue', capacity: 250, image: 'venue6.png' },
+  { id: 'V005', name: 'Adelaide Arts Centre', capacity: 300, image: 'venue5.png' },
+  { id: 'V006', name: 'Melbourne Centre for Performing Arts', capacity: 70, image: 'venue6.png' },
 ];
 
 const insertVenue = db.prepare(`
